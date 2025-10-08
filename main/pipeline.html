@@ -252,42 +252,31 @@
           <section id="gauntlet-hardware-pipeline">
 <h1>Gauntlet Hardware Pipeline<a class="headerlink" href="#gauntlet-hardware-pipeline" title="Permalink to this heading"></a></h1>
 <p>The main purpose of this shared library is to provide a standardize pipeline for software project that want to run code against hardware targets. The figure below shows an example pipeline that is generated using the Jenkinsfile below it.</p>
-<div class="graphviz"><img src="_images/graphviz-929d571b8c4b321a341650895fac6ab7f1f91e9f.png" alt="digraph {
+<p class="plantuml">
+<img src="_images/plantuml-86f449d89d0ae8452ba1a75d0a4ac0c91b3d5fe8.png" alt="&#64;startuml Gauntlet Hardware Pipeline
+start
+title Gauntlet Hardware Pipeline
+:START(master);
+If (Update Agents (nuc-01)) 
+  :Query Node;
+else ()
+  :Update Agents (nuc-02);
+endif  
+switch (Check Required Hardware (master))
+  case ()
+    :Setup Docker (nuc-01-pluto);
+    :Linux Tests (nuc-01-pluto);  
+  case ()
+    :Setup Docker (nuc-01-zed-fmcomms2);
+    :Linux Tests (nuc-02);  
 
-
-    rankdir=LR;
-    //size=&quot;30,30&quot;;
-    ratio = fill;
-
-    &quot;START\n(master)&quot;
-    &quot;Query Node\n(nuc-01)&quot; 
-    &quot;Query Node\n(nuc-02)&quot; 
-    &quot;Linux Tests\n(nuc-01-pluto)&quot;
-    &quot;Linux Tests\n(nuc-01-zed-fmcomms2)&quot;
-    &quot;Linux Tests\n(nuc-02-zc706-daq2)&quot;
-
-    &quot;START\n(master)&quot; -&gt; &quot;Update Agents\n(nuc-01)&quot;
-    &quot;START\n(master)&quot; -&gt; &quot;Update Agents\n(nuc-02)&quot;
-
-    &quot;Update Agents\n(nuc-01)&quot; -&gt; &quot;Query Node\n(nuc-01)&quot;
-    &quot;Update Agents\n(nuc-02)&quot; -&gt; &quot;Query Node\n(nuc-02)&quot;
-
-    &quot;Query Node\n(nuc-01)&quot; -&gt; &quot;Check Required\nHardware\n(master)&quot;
-    &quot;Query Node\n(nuc-02)&quot; -&gt; &quot;Check Required\nHardware\n(master)&quot;
- 
-    &quot;Check Required\nHardware\n(master)&quot; -&gt; &quot;Setup Docker\n(nuc-01-pluto)&quot;
-    &quot;Check Required\nHardware\n(master)&quot; -&gt; &quot;Setup Docker\n(nuc-01-zed-fmcomms2)&quot;
-    &quot;Check Required\nHardware\n(master)&quot; -&gt; &quot;Setup Docker\n(nuc-02-zc706-daq2)&quot;
-
-    &quot;Setup Docker\n(nuc-01-pluto)&quot; -&gt; &quot;Linux Tests\n(nuc-01-pluto)&quot;
-    &quot;Setup Docker\n(nuc-01-zed-fmcomms2)&quot; -&gt; &quot;Linux Tests\n(nuc-01-zed-fmcomms2)&quot;
-    &quot;Setup Docker\n(nuc-02-zc706-daq2)&quot; -&gt; &quot;Linux Tests\n(nuc-02-zc706-daq2)&quot;
-
-    &quot;Linux Tests\n(nuc-01-pluto)&quot; -&gt; &quot;Collect Logs\n&quot;
-    &quot;Linux Tests\n(nuc-01-zed-fmcomms2)&quot; -&gt; &quot;Collect Logs\n&quot;
-    &quot;Linux Tests\n(nuc-02-zc706-daq2)&quot; -&gt; &quot;Collect Logs\n&quot;
-
-}" class="graphviz" /></div>
+  case ()
+    :Setup Docker (nuc-02-zc706-daq2);
+    :Linux Tests (nuc-02-zc706-daq2);
+endswitch
+  :Collect Logs;
+&#64;enduml"/>
+</p>
 <p>These pipelines have 3 main phases. Starting from the left side of the pipeline, phase 1 is the first 3 horizontal stages. In the first stage each agent, tools required are updated. Then for the next stage, each agent is queried to determined available hardware. This information is returned to the master node and the necessary downstream stages are determined. This will occur in all pipeline configuration using the <strong>Gaunlet</strong> class. The generated downstream stages will be based on how the <strong>harness</strong> object is configured and each of these downstream stages are run in a docker container, thus the Setup Docker stage which is the start of phase 2.</p>
 <p>In the example Jenkinsfile below which also what the figure above reflects, a stage is added from the <a class="reference internal" href="stages.html#library-label"><span class="std std-ref">Pipeline Stage Library</span></a>. Added stages are run in the order in which they are added. Each of these stages will be run for each target board configuration. Defining the board or hardware setup desired, the <em>set_required_hardware</em> method should be used.</p>
 <p>The final phase is for post processing, here logs and artifacts are gathered for collection. These will typically be saved to artifactory or to a logging server for analysis.</p>

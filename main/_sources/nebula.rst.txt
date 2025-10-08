@@ -7,14 +7,14 @@ What is Nebula?
 To aid in development board management and interfacing the Nebula python tool is used.
 To know more about this tool, visit: `Nebula`_
 
-.. _Nebula: https://nebula-fpga-dev.readthedocs.io/en/latest/?badge=latest
+.. _Nebula: https://analogdevicesinc.github.io/nebula/main/index.html
 
 Using Nebula in Jenkins Shared Library
 --------------------------------------
 
-To use the commands available in Nebula pythoon tool, a method *nebula* is added into Jenkins Shared Library. This enables passing the nebula commads that we want to run in order to communicate with the board.
+To use the commands available in Nebula python tool, a method *nebula* is added into Jenkins Shared Library. This enables passing the nebula commands that we want to run in order to communicate with the board.
 
-This method is used within the available stages in the stage library and can also be used in your custom stages. An example is shown in how you can leverage this methos in your custom stages.
+This method is used within the available stages in the stage library and can also be used in your custom stages. An example is shown in how you can leverage this method in your custom stages.
 
 Example 1 - PowerBoard
 ^^^^^^^^^^^^^^^^^^^^^^
