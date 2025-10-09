@@ -12,12 +12,9 @@ First, we will discuss the bare minimum requirements or parts for the Jenkinfile
 
 .. code-block:: groovy
 
-    // Lock the resources
     lock(label: 'adgt_test_harness_boards'){
         @Library('sdgtt-lib@jsl_updates') _ 
         
-        //register context for jenkins shared library
-        registerContext(this)
         //instantiate constructor method
         def harness = getGauntlet()
     
@@ -57,15 +54,7 @@ The library call @Library('sdgtt-lib@adgt-test-harness’) fetches the needed li
 Instantiate getGauntlet Constructor Method
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Since we now secured and have access to the library, the next step is to register the Jenkins pipeline context and instantiate the constructor method.
-
-First, we need to register the pipeline context so the shared library can access Jenkins-specific features:
-
-.. code-block:: groovy
-
-    registerContext(this)
-
-Then we instantiate the getGauntlet constructor method. This method calls a map that holds all constants and data members that can be overridden when constructing. This imitates a constructor and defines an instance of a Consul object. All according to API. The simplest way to use this is to use the default values that it holds.
+Since we now secured and have access to the library, the next step is to instantiate the constructor method – getGauntlet. This method calls a map that holds all constants and data members that can be overridden when constructing. This imitates a constructor and defines an instance of a Consul object. All according to API. The simplest way to use this is to use the default values that it holds.
 
 .. code-block:: groovy
 
