@@ -255,167 +255,261 @@
 <section id="updatebootfiles">
 <h2>UpdateBOOTFiles<a class="headerlink" href="#updatebootfiles" title="Permalink to this heading"></a></h2>
 <p>This stage downloads the needed files and then proceeds to update the files on the device’s SD card. After updating, the device reboots. For pluto and m2k, this stage downloads their firmware and then updates the device’s firmware.</p>
-<details class="summary-updatebootfiles-stage">
-<summary>UpdateBOOTFiles Stage</summary><div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="s1">&#39;UpdateBOOTFiles&#39;</span><span class="o">:</span>
-<span class="w">        </span><span class="n">println</span><span class="o">(</span><span class="s1">&#39;Added Stage UpdateBOOTFiles&#39;</span><span class="o">)</span>
-<span class="w">        </span><span class="n">cls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">-&gt;</span>
-<span class="w">            </span><span class="k">try</span><span class="w"> </span><span class="o">{</span>
-<span class="w">            </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Update BOOT Files&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
-<span class="w">                </span><span class="n">println</span><span class="o">(</span><span class="s2">&quot;Board name passed: &quot;</span><span class="o">+</span><span class="n">board</span><span class="o">)</span>
-<span class="w">                </span><span class="n">println</span><span class="o">(</span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">branches</span><span class="o">.</span><span class="na">toString</span><span class="o">())</span>
-<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="n">board</span><span class="o">==</span><span class="s2">&quot;pluto&quot;</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">nebula</span><span class="o">(</span><span class="s1">&#39;dl.bootfiles --board-name=&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39; --branch=&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">firmwareVersion</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39; --firmware&#39;</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">)</span>
-<span class="w">                </span><span class="k">else</span>
-<span class="w">                    </span><span class="n">nebula</span><span class="o">(</span><span class="s1">&#39;dl.bootfiles --board-name=&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39; --source-root=&quot;&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">nebula_local_fs_source_root</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;&quot; --source=&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">bootfile_source</span>
-<span class="w">                            </span><span class="o">+</span><span class="w">  </span><span class="s1">&#39; --branch=&quot;&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">branches</span><span class="o">.</span><span class="na">toString</span><span class="o">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;&quot;&#39;</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">)</span>
-<span class="w">                </span><span class="c1">//get git sha properties of files</span>
-<span class="w">                </span><span class="n">get_gitsha</span><span class="o">(</span><span class="n">board</span><span class="o">)</span>
-<span class="w">                </span><span class="c1">//update-boot-files</span>
-<span class="w">                </span><span class="n">nebula</span><span class="o">(</span><span class="s1">&#39;manager.update-boot-files --board-name=&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39; --folder=outs&#39;</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">)</span>
-<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="n">board</span><span class="o">==</span><span class="s2">&quot;pluto&quot;</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">nebula</span><span class="o">(</span><span class="s1">&#39;uart.set-local-nic-ip-from-usbdev --board-name=&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">board</span><span class="o">)</span>
-<span class="w">                </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;uboot_reached&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;True&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;kernel_started&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;True&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;linux_prompt_reached&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;True&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;post_boot_failure&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;False&#39;</span><span class="o">)</span>
-<span class="w">            </span><span class="o">}}</span>
-<span class="w">            </span><span class="k">catch</span><span class="o">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">ex</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
-<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="n">getStackTrace</span><span class="o">(</span><span class="n">ex</span><span class="o">)</span>
-<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="n">ex</span><span class="o">.</span><span class="na">getMessage</span><span class="o">().</span><span class="na">contains</span><span class="o">(</span><span class="s1">&#39;u-boot not reached&#39;</span><span class="o">)){</span>
-<span class="w">                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;uboot_reached&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;False&#39;</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;kernel_started&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;False&#39;</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;linux_prompt_reached&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;False&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="o">}</span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="n">ex</span><span class="o">.</span><span class="na">getMessage</span><span class="o">().</span><span class="na">contains</span><span class="o">(</span><span class="s1">&#39;u-boot menu cannot boot kernel&#39;</span><span class="o">)){</span>
-<span class="w">                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;uboot_reached&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;True&#39;</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;kernel_started&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;False&#39;</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;linux_prompt_reached&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;False&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="o">}</span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="n">ex</span><span class="o">.</span><span class="na">getMessage</span><span class="o">().</span><span class="na">contains</span><span class="o">(</span><span class="s1">&#39;Linux not fully booting&#39;</span><span class="o">)){</span>
-<span class="w">                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;uboot_reached&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;True&#39;</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;kernel_started&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;True&#39;</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;linux_prompt_reached&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;False&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="o">}</span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="n">ex</span><span class="o">.</span><span class="na">getMessage</span><span class="o">().</span><span class="na">contains</span><span class="o">(</span><span class="s1">&#39;Linux is functional but Ethernet is broken after updating boot files&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">||</span>
-<span class="w">                          </span><span class="n">ex</span><span class="o">.</span><span class="na">getMessage</span><span class="o">().</span><span class="na">contains</span><span class="o">(</span><span class="s1">&#39;SSH not working but ping does after updating boot files&#39;</span><span class="o">)){</span>
-<span class="w">                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;uboot_reached&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;True&#39;</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;kernel_started&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;True&#39;</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;linux_prompt_reached&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;True&#39;</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;post_boot_failure&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;True&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="o">}</span><span class="k">else</span><span class="o">{</span>
-<span class="w">                    </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;Update BOOT Files unexpectedly failed. ${ex.getMessage()}&quot;</span>
-<span class="w">                </span><span class="o">}</span>
-<span class="w">                </span><span class="n">get_gitsha</span><span class="o">(</span><span class="n">board</span><span class="o">)</span>
-<span class="w">                </span><span class="c1">// send logs to elastic</span>
-<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">send_results</span><span class="o">){</span>
-<span class="w">                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;last_failing_stage&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;UpdateBOOTFiles&#39;</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">failing_msg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&#39;&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ex</span><span class="o">.</span><span class="na">getMessage</span><span class="o">().</span><span class="na">split</span><span class="o">(</span><span class="s1">&#39;\n&#39;</span><span class="o">).</span><span class="na">last</span><span class="o">().</span><span class="na">replaceAll</span><span class="o">(</span><span class="w"> </span><span class="s">/([&#39;])/</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;&quot;&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot;&#39;&quot;</span>
-<span class="w">                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;last_failing_stage_failure&#39;</span><span class="o">,</span><span class="w"> </span><span class="n">failing_msg</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">stage_library</span><span class="o">(</span><span class="s1">&#39;SendResults&#39;</span><span class="o">).</span><span class="na">call</span><span class="o">(</span><span class="n">board</span><span class="o">)</span>
-<span class="w">                </span><span class="o">}</span>
-<span class="w">                </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Exception</span><span class="o">(</span><span class="s1">&#39;UpdateBOOTFiles failed: &#39;</span><span class="o">+</span><span class="w"> </span><span class="n">ex</span><span class="o">.</span><span class="na">getMessage</span><span class="o">())</span>
-<span class="w">            </span><span class="o">}</span><span class="k">finally</span><span class="o">{</span>
-<span class="w">                </span><span class="c1">//archive uart logs</span>
-<span class="w">                </span><span class="n">run_i</span><span class="o">(</span><span class="s2">&quot;if [ -f ${board}.log ]; then mv ${board}.log uart_boot_&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot;.log; fi&quot;</span><span class="o">)</span>
-<span class="w">                </span><span class="n">archiveArtifacts</span><span class="w"> </span><span class="nl">artifacts:</span><span class="w"> </span><span class="s1">&#39;uart_boot_*.log&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">followSymlinks:</span><span class="w"> </span><span class="kc">false</span><span class="o">,</span><span class="w"> </span><span class="nl">allowEmptyArchive:</span><span class="w"> </span><span class="kc">true</span>
-<span class="w">            </span><span class="o">}</span>
-<span class="w">  </span><span class="o">};</span>
-</pre></div>
-</div>
-</details><div class="line-block">
-<div class="line"><br /></div>
-</div>
+<p class="plantuml">
+<img src="_images/plantuml-0a2ade973ba447594bd017dcd10d8085ffd1f03d.png" alt="&#64;startuml UpdateBOOTFiles Workflow
+start
+title UpdateBOOTFiles Stage Workflow
+:Execute UpdateBOOTFiles stage;
+:Print board name and branches;
+
+partition &quot;Try Block&quot; {
+  if (Board is Pluto?) then (yes)
+    :Download firmware files via Nebula;
+    note right: dl.bootfiles ____board-name={board} ____branch={firmwareVersion} ____firmware
+  else (no)
+    :Download boot files via Nebula;
+    note right: dl.bootfiles ____board-name={board} ____source-root={source_root} ____source={source} ____branch={branches}
+  endif
+  :Get git SHA for board;
+  :Update boot files on device;
+  note right: manager.update-boot-files ____board-name={board} ____folder=outs
+  if (Board is Pluto?) then (yes)
+    :Set local NIC IP from USB device;
+    note right: uart.set-local-nic-ip-from-usbdev ____board-name={board}
+  endif
+  :Set elastic fields (success);
+  note right
+  set_elastic_field(board, 'uboot_reached', 'True')
+  set_elastic_field(board, 'kernel_started', 'True')
+  set_elastic_field(board, 'linux_prompt_reached', 'True')
+  set_elastic_field(board, 'post_boot_failure', 'False')
+  end note
+}
+
+partition &quot;Exception Handling&quot; {
+  if (Exception occurs?) then (yes)
+    :Log stack trace;
+    switch (Exception type?)
+    case (u-boot not reached)
+      :Set elastic fields;
+      note right
+      board, uboot_reached = False
+      board, kernel_started = False
+      board, linux_prompt_reached = False
+      end note
+    case (u-boot menu cannot boot kernel)
+      :Set elastic fields;
+      note right
+      board, uboot_reached = True
+      board, kernel_started = False
+      board, linux_prompt_reached = False
+      end note
+    case (Linux not fully booting)
+      :Set elastic fields;
+      note right
+      board, uboot_reached = True
+      board, kernel_started = True
+      board, linux_prompt_reached = False
+      end note
+    case (Ethernet/SSH issues)
+      :Set elastic fields;
+      note right
+      board, uboot_reached = True
+      board, kernel_started = True
+      board, linux_prompt_reached = True
+      board, post_boot_failure = True
+      end note
+    case (Other errors)
+      :Log unexpected failure;
+    endswitch
+    :Get git SHA for board;
+    if (send_results enabled?) then (yes)
+      :Set failing stage info;
+      note right
+      last_failing_stage = 'UpdateBOOTFiles'
+      last_failing_stage_failure = exception message
+      end note
+      :Call SendResults stage;
+    endif
+    :Throw UpdateBOOTFiles failed exception;
+    note right: Exception thrown but finally block still executes
+  endif
+}
+
+partition &quot;Finally Block&quot; {
+  :Archive UART logs;
+  note right
+  run_i(&quot;if [ -f ${board}.log ]; then mv ${board}.log uart_boot_&quot; + board + &quot;.log; fi&quot;)
+  archiveArtifacts artifacts: 'uart_boot_*.log', followSymlinks: false, allowEmptyArchive: true
+  end note
+}
+
+stop
+&#64;enduml
+    Success Case:
+    - uboot_reached: True
+    - kernel_started: True  
+    - linux_prompt_reached: True
+    - post_boot_failure: False
+end note
+
+alt Exception occurs
+    UBF -&gt; UBF: Analyze exception message
+    
+    alt u-boot not reached
+        UBF -&gt; ES: Set uboot_reached=False, kernel_started=False, linux_prompt_reached=False
+    else u-boot menu cannot boot kernel
+        UBF -&gt; ES: Set uboot_reached=True, kernel_started=False, linux_prompt_reached=False
+    else Linux not fully booting
+        UBF -&gt; ES: Set uboot_reached=True, kernel_started=True, linux_prompt_reached=False
+    else Ethernet/SSH issues
+        UBF -&gt; ES: Set uboot_reached=True, kernel_started=True, linux_prompt_reached=True, post_boot_failure=True
+    else Other errors
+        UBF -&gt; UBF: Log unexpected failure
+    end
+    
+    UBF -&gt; UBF: get_gitsha(board)
+    
+    alt send_results enabled
+        UBF -&gt; ES: Set last_failing_stage=UpdateBOOTFiles
+        UBF -&gt; ES: Set last_failing_stage_failure message
+        UBF -&gt; UBF: Call SendResults stage
+    end
+    
+    UBF -&gt; JP: Throw UpdateBOOTFiles failed exception
+end
+
+UBF -&gt; UBF: Archive UART logs (rename {board}.log to uart_boot_{board}.log)
+UBF -&gt; JP: Stage completed
+
+&#64;enduml"/>
+</p>
 </section>
 <section id="recoverboard">
 <h2>RecoverBoard<a class="headerlink" href="#recoverboard" title="Permalink to this heading"></a></h2>
 <p>This stage enables users to recover boards when they can no longer be accessed. Reference files are first downloaded, then the board is recovered using the recovery device manager function of Nebula.</p>
-<details class="summary-recoverboard-stage">
-<summary>RecoverBoard Stage</summary><div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">cls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">-&gt;</span>
-<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;RecoverBoard&#39;</span><span class="o">){</span>
-<span class="w">            </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;Recovering ${board}&quot;</span>
-<span class="w">            </span><span class="kt">def</span><span class="w"> </span><span class="n">ref_branch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s1">&#39;boot_partition&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;release&#39;</span><span class="o">]</span>
-<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="n">board</span><span class="o">==</span><span class="s2">&quot;pluto&quot;</span><span class="o">){</span>
-<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;Recover stage does not support pluto yet!&quot;</span>
-<span class="w">            </span><span class="o">}</span><span class="k">else</span><span class="o">{</span>
-<span class="w">                </span><span class="n">dir</span><span class="w"> </span><span class="o">(</span><span class="s1">&#39;recovery&#39;</span><span class="o">){</span>
-<span class="w">                    </span><span class="k">try</span><span class="o">{</span>
-<span class="w">                        </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;Fetching reference boot files&quot;</span>
-<span class="w">                        </span><span class="n">nebula</span><span class="o">(</span><span class="s1">&#39;dl.bootfiles --board-name=&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39; --source-root=&quot;&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">nebula_local_fs_source_root</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;&quot; --source=&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">bootfile_source</span>
-<span class="w">                            </span><span class="o">+</span><span class="w">  </span><span class="s1">&#39; --branch=&quot;&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ref_branch</span><span class="o">.</span><span class="na">toString</span><span class="o">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;&quot;&#39;</span><span class="o">)</span>
-<span class="w">                        </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;Extracting reference fsbl and u-boot&quot;</span>
-<span class="w">                        </span><span class="n">dir</span><span class="o">(</span><span class="s1">&#39;outs&#39;</span><span class="o">){</span>
-<span class="w">                            </span><span class="n">sh</span><span class="o">(</span><span class="s2">&quot;cp bootgen_sysfiles.tgz ..&quot;</span><span class="o">)</span>
-<span class="w">                        </span><span class="o">}</span>
-<span class="w">                        </span><span class="n">sh</span><span class="o">(</span><span class="s2">&quot;tar -xzvf bootgen_sysfiles.tgz; cp u-boot-*.elf u-boot.elf&quot;</span><span class="o">)</span>
-<span class="w">                        </span><span class="n">echo</span><span class="w"> </span><span class="s2">&quot;Executing board recovery...&quot;</span>
-<span class="w">                        </span><span class="n">nebula</span><span class="o">(</span><span class="s1">&#39;manager.recovery-device-manager --board-name=&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39; --folder=outs&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39; --sdcard&#39;</span><span class="o">)</span>
-<span class="w">                    </span><span class="o">}</span><span class="k">catch</span><span class="o">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">ex</span><span class="o">){</span>
-<span class="w">                        </span><span class="n">echo</span><span class="w"> </span><span class="n">getStackTrace</span><span class="o">(</span><span class="n">ex</span><span class="o">)</span>
-<span class="w">                        </span><span class="k">throw</span><span class="w"> </span><span class="n">ex</span>
-<span class="w">                    </span><span class="o">}</span><span class="k">finally</span><span class="o">{</span>
-<span class="w">                        </span><span class="c1">//archive uart logs</span>
-<span class="w">                        </span><span class="n">run_i</span><span class="o">(</span><span class="s2">&quot;if [ -f ${board}.log ]; then mv ${board}.log uart_recover_&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot;.log; fi&quot;</span><span class="o">)</span>
-<span class="w">                        </span><span class="n">archiveArtifacts</span><span class="w"> </span><span class="nl">artifacts:</span><span class="w"> </span><span class="s1">&#39;uart_recover_*.log&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">followSymlinks:</span><span class="w"> </span><span class="kc">false</span><span class="o">,</span><span class="w"> </span><span class="nl">allowEmptyArchive:</span><span class="w"> </span><span class="kc">true</span>
-<span class="w">                    </span><span class="o">}</span>
-<span class="w">                </span><span class="o">}</span>
-<span class="w">            </span><span class="o">}</span>
-<span class="w">        </span><span class="o">}</span>
-<span class="w">    </span><span class="o">};</span>
-</pre></div>
-</div>
-</details><div class="line-block">
-<div class="line"><br /></div>
-</div>
+<p class="plantuml">
+<img src="_images/plantuml-87f8bc0477ae687df67606dc1baf94346a248331.png" alt="&#64;startuml RecoverBoard Workflow
+start
+title RecoverBoard Stage Workflow
+:Execute RecoverBoard stage;
+:Define reference branches;
+note right: ref_branch = ['boot_partition', 'release']
+if (Board is pluto?) then (yes)
+  :Log &quot;Recover stage does not support pluto yet!&quot;;
+  stop
+else (no)
+  :Enter recovery directory;
+  partition &quot;Try Block&quot; {
+    :Fetch reference boot files;
+    note right: 'dl.bootfiles - -board-name=' + board + ' - -source-root=&quot;' + gauntEnv.nebula_local_fs_source_root + '&quot; - -source=' + gauntEnv.bootfile_source +  ' - -branch=&quot;' + ref_branch.toString() + '&quot;'
+    :Extract reference fsbl and u-boot;
+    note right
+    cd outs/
+    cp bootgen_sysfiles.tgz ..
+    tar -xzvf bootgen_sysfiles.tgz
+    cp u-boot-*.elf u-boot.elf
+    end note
+    :Execute board recovery;
+    note right: manager.recovery-device-manager ____board-name={board} ____folder=outs ____sdcard
+  }
+  partition &quot;Exception Handling&quot; {
+    if (Exception occurs?) then (yes)
+      :Log stack trace;
+      :Re-throw exception;
+      note right: throw ex
+    endif
+  }
+  partition &quot;Finally Block&quot; {
+    :Archive UART logs;
+    note right
+    run_i(&quot;if [ -f ${board}.log ]; then mv ${board}.log uart_recover_&quot; + board + &quot;.log; fi&quot;)
+    archiveArtifacts artifacts: 'uart_recover_*.log', followSymlinks: false, allowEmptyArchive: true
+    end note
+  }
+endif
+:Stage completed;
+stop
+&#64;enduml"/>
+</p>
 </section>
 <section id="sendresults">
 <h2>SendResults<a class="headerlink" href="#sendresults" title="Permalink to this heading"></a></h2>
 <p>This stage sends the collected results from all stages to the elastic server which will then be processed for easy viewing.</p>
-<details class="summary-sendresults-stage">
-<summary>SendResults Stage</summary><div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="n">cls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">-&gt;</span>
-<span class="w">            </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;SendLogsToElastic&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
-<span class="w">                </span><span class="n">is_hdl_release</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;False&quot;</span>
-<span class="w">                </span><span class="n">is_linux_release</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;False&quot;</span>
-<span class="w">                </span><span class="n">is_boot_partition_release</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;False&quot;</span>
-<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">bootPartitionBranch</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;NA&#39;</span><span class="o">){</span>
-<span class="w">                    </span><span class="n">is_hdl_release</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">(</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">hdlBranch</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;release&quot;</span><span class="w"> </span><span class="o">)?</span><span class="w"> </span><span class="s2">&quot;True&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;False&quot;</span>
-<span class="w">                    </span><span class="n">is_linux_release</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">(</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">linuxBranch</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;release&quot;</span><span class="w"> </span><span class="o">)?</span><span class="w"> </span><span class="s2">&quot;True&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;False&quot;</span>
-<span class="w">                </span><span class="o">}</span><span class="k">else</span><span class="o">{</span>
-<span class="w">                    </span><span class="n">is_boot_partition_release</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">(</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">bootPartitionBranch</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;release&quot;</span><span class="w"> </span><span class="o">)?</span><span class="w"> </span><span class="s2">&quot;True&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;False&quot;</span>
-<span class="w">                </span><span class="o">}</span>
-<span class="w">                </span><span class="n">println</span><span class="o">(</span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">elastic_logs</span><span class="o">)</span>
-<span class="w">                </span><span class="n">echo</span><span class="w"> </span><span class="s1">&#39;Starting send log to elastic search&#39;</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;boot_folder_name &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">board</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; hdl_hash &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;\&#39;&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">get_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;hdl_hash&#39;</span><span class="w"> </span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;NA&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;\&#39;&#39;</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; linux_hash &#39;</span><span class="w"> </span><span class="o">+</span><span class="w">  </span><span class="s1">&#39;\&#39;&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">get_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;linux_hash&#39;</span><span class="w"> </span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;NA&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;\&#39;&#39;</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; boot_partition_hash &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;\&#39;&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">boot_partition_hash</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;\&#39;&#39;</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; hdl_branch &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">hdlBranch</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; linux_branch &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">linuxBranch</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; boot_partition_branch &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">bootPartitionBranch</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; is_hdl_release &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">is_hdl_release</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; is_linux_release &#39;</span><span class="w">  </span><span class="o">+</span><span class="w">  </span><span class="n">is_linux_release</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; is_boot_partition_release &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">is_boot_partition_release</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; uboot_reached &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">get_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;uboot_reached&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;False&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; linux_prompt_reached &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">get_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;linux_prompt_reached&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;False&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; drivers_enumerated &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">get_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;drivers_enumerated&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; drivers_missing &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">get_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;drivers_missing&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; dmesg_warnings_found &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">get_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;dmesg_warns&#39;</span><span class="w"> </span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; dmesg_errors_found &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">get_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;dmesg_errs&#39;</span><span class="w"> </span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="c1">// cmd +=&quot;jenkins_job_date datetime.datetime.now(),</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; jenkins_build_number &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">env</span><span class="o">.</span><span class="na">BUILD_NUMBER</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; jenkins_project_name &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">env</span><span class="o">.</span><span class="na">JOB_NAME</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; jenkins_agent &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">env</span><span class="o">.</span><span class="na">NODE_NAME</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; jenkins_trigger &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">job_trigger</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; pytest_errors &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">get_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;errors&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; pytest_failures &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">get_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;failures&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; pytest_skipped &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">get_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;skipped&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; pytest_tests &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">get_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;tests&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;0&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; last_failing_stage &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">get_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;last_failing_stage&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;NA&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="n">cmd</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s1">&#39; last_failing_stage_failure &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">get_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;last_failing_stage_failure&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;NA&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="n">sendLogsToElastic</span><span class="o">(</span><span class="n">cmd</span><span class="o">)</span>
-<span class="w">            </span><span class="o">}</span>
-<span class="w">  </span><span class="o">};</span>
-</pre></div>
-</div>
-</details><div class="line-block">
-<div class="line"><br /></div>
-</div>
+<p class="plantuml">
+<img src="_images/plantuml-4c8c2e4b9d5f6b43a5cf7c7374b974b880d0af5f.png" alt="&#64;startuml SendResults Workflow
+start
+title SendResults Stage Workflow
+:Execute SendResults stage;
+:Initialize release flags;
+note right
+is_hdl_release = &quot;False&quot;
+is_linux_release = &quot;False&quot;
+is_boot_partition_release = &quot;False&quot;
+end note
+
+if (bootPartitionBranch == 'NA'?) then (yes)
+  :Set HDL and Linux release flags;
+  note right
+  is_hdl_release = ( gauntEnv.hdlBranch == &quot;release&quot; )? &quot;True&quot;: &quot;False&quot;
+  is_linux_release = ( gauntEnv.linuxBranch == &quot;release&quot; )? &quot;True&quot;: &quot;False&quot;
+  end note
+else (no)
+  :Set boot partition release flag;
+  note right
+  is_boot_partition_release = ( gauntEnv.bootPartitionBranch == &quot;release&quot; )? &quot;True&quot;: &quot;False&quot;
+  end note
+endif
+
+:Log elastic logs and start message;
+:Build elastic command string;
+note right
+cmd = 'boot_folder_name ' + board
+cmd += ' hdl_hash ' + '\'' + get_elastic_field(board, 'hdl_hash' , 'NA') + '\''
+cmd += ' linux_hash ' +  '\'' + get_elastic_field(board, 'linux_hash' , 'NA') + '\''
+cmd += ' boot_partition_hash ' + '\'' + gauntEnv.boot_partition_hash + '\''
+cmd += ' hdl_branch ' + gauntEnv.hdlBranch
+cmd += ' linux_branch ' + gauntEnv.linuxBranch
+cmd += ' boot_partition_branch ' + gauntEnv.bootPartitionBranch
+cmd += ' is_hdl_release ' + is_hdl_release
+cmd += ' is_linux_release '  +  is_linux_release
+cmd += ' is_boot_partition_release ' + is_boot_partition_release
+end note
+
+:Add boot status fields;
+note right
+cmd += ' uboot_reached ' + get_elastic_field(board, 'uboot_reached', 'False')
+cmd += ' linux_prompt_reached ' + get_elastic_field(board, 'linux_prompt_reached', 'False')
+cmd += ' drivers_enumerated ' + get_elastic_field(board, 'drivers_enumerated', '0')
+cmd += ' drivers_missing ' + get_elastic_field(board, 'drivers_missing', '0')
+cmd += ' dmesg_warnings_found ' + get_elastic_field(board, 'dmesg_warns' , '0')
+cmd += ' dmesg_errors_found ' + get_elastic_field(board, 'dmesg_errs' , '0')
+end note
+
+:Add Jenkins metadata;
+note right
+cmd += ' jenkins_build_number ' + env.BUILD_NUMBER
+cmd += ' jenkins_project_name ' + env.JOB_NAME
+cmd += ' jenkins_agent ' + env.NODE_NAME
+cmd += ' jenkins_trigger ' + gauntEnv.job_trigger
+end note
+
+:Add test results;
+note right
+cmd += ' pytest_errors ' + get_elastic_field(board, 'errors', '0')
+cmd += ' pytest_failures ' + get_elastic_field(board, 'failures', '0')
+cmd += ' pytest_skipped ' + get_elastic_field(board, 'skipped', '0')
+cmd += ' pytest_tests ' + get_elastic_field(board, 'tests', '0')
+cmd += ' last_failing_stage ' + get_elastic_field(board, 'last_failing_stage', 'NA')
+cmd += ' last_failing_stage_failure ' + get_elastic_field(board, 'last_failing_stage_failure', 'NA')
+end note
+
+:Send logs to Elastic Search;
+note right: sendLogsToElastic(cmd)
+:Stage completed;
+stop
+&#64;enduml"/>
+</p>
 </section>
 <section id="test-stages">
 <h2>Test Stages<a class="headerlink" href="#test-stages" title="Permalink to this heading"></a></h2>
@@ -423,247 +517,410 @@
 <section id="linuxtests">
 <h3>LinuxTests<a class="headerlink" href="#linuxtests" title="Permalink to this heading"></a></h3>
 <p>This stage checks for dmesg errors, checks iio devices, and runs diagnostics on boards.</p>
-<details class="summary-linuxtests-stage">
-<summary>LinuxTests Stage</summary><div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="s1">&#39;LinuxTests&#39;</span><span class="o">:</span>
-<span class="w">        </span><span class="n">println</span><span class="o">(</span><span class="s1">&#39;Added Stage LinuxTests&#39;</span><span class="o">)</span>
-<span class="w">        </span><span class="n">cls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">-&gt;</span>
-<span class="w">            </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Linux Tests&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
-<span class="w">                </span><span class="kt">def</span><span class="w"> </span><span class="n">failed_test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
-<span class="w">                </span><span class="kt">def</span><span class="w"> </span><span class="n">drivers_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">                </span><span class="kt">def</span><span class="w"> </span><span class="n">missing_drivers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
-<span class="w">                </span><span class="k">try</span><span class="w"> </span><span class="o">{</span>
-<span class="w">                    </span><span class="c1">// run_i(&#39;pip3 install pylibiio&#39;,true)</span>
-<span class="w">                    </span><span class="c1">//def ip = nebula(&#39;uart.get-ip&#39;)</span>
-<span class="w">                    </span><span class="kt">def</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nebula</span><span class="o">(</span><span class="s1">&#39;update-config network-config dutip --board-name=&#39;</span><span class="o">+</span><span class="n">board</span><span class="o">)</span>
-<span class="w">                    </span><span class="k">try</span><span class="o">{</span>
-<span class="w">                        </span><span class="n">nebula</span><span class="o">(</span><span class="s2">&quot;net.check-dmesg --ip=&#39;&quot;</span><span class="o">+</span><span class="n">ip</span><span class="o">+</span><span class="s2">&quot;&#39; --board-name=&quot;</span><span class="o">+</span><span class="n">board</span><span class="o">)</span>
-<span class="w">                    </span><span class="o">}</span><span class="k">catch</span><span class="o">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">ex</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
-<span class="w">                        </span><span class="n">failed_test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">failed_test</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot;[dmesg check failed: ${ex.getMessage()}]&quot;</span>
-<span class="w">                    </span><span class="o">}</span>
+<p class="plantuml">
+<img src="_images/plantuml-fc4fc6de42e5804dc01b0212b0653c4a6b599d4e.png" alt="&#64;startuml LinuxTests Workflow
+start
+title LinuxTests Stage Workflow
+:Execute LinuxTests stage;
+:Initialize variables;
+note right
+failed_test = ''
+drivers_count = 0
+missing_drivers = 0
+end note
 
-<span class="w">                    </span><span class="k">try</span><span class="o">{</span>
-<span class="w">                        </span><span class="n">nebula</span><span class="o">(</span><span class="s1">&#39;driver.check-iio-devices --uri=&quot;ip:&#39;</span><span class="o">+</span><span class="n">ip</span><span class="o">+</span><span class="s1">&#39;&quot; --board-name=&#39;</span><span class="o">+</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">)</span>
-<span class="w">                    </span><span class="o">}</span><span class="k">catch</span><span class="o">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">ex</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
-<span class="w">                        </span><span class="n">failed_test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">failed_test</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot;[iio_devices check failed: ${ex.getMessage()}]&quot;</span>
-<span class="w">                        </span><span class="n">missing_devs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eval</span><span class="o">.</span><span class="na">me</span><span class="o">(</span><span class="n">ex</span><span class="o">.</span><span class="na">getMessage</span><span class="o">().</span><span class="na">split</span><span class="o">(</span><span class="s1">&#39;\n&#39;</span><span class="o">).</span><span class="na">last</span><span class="o">().</span><span class="na">split</span><span class="o">(</span><span class="s1">&#39;not found&#39;</span><span class="o">)[</span><span class="mi">1</span><span class="o">].</span><span class="na">replaceAll</span><span class="o">(</span><span class="s2">&quot;&#39;\$&quot;</span><span class="o">,</span><span class="s2">&quot;&quot;</span><span class="o">))</span>
-<span class="w">                        </span><span class="n">missing_drivers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">missing_devs</span><span class="o">.</span><span class="na">size</span><span class="o">()</span>
-<span class="w">                        </span><span class="n">writeFile</span><span class="o">(</span><span class="nl">file:</span><span class="w"> </span><span class="n">board</span><span class="o">+</span><span class="s1">&#39;_missing_devs.log&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">text:</span><span class="w"> </span><span class="n">missing_devs</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="s2">&quot;,&quot;</span><span class="o">))</span>
-<span class="w">                        </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;drivers_missing&#39;</span><span class="o">,</span><span class="w"> </span><span class="n">missing_drivers</span><span class="o">.</span><span class="na">toString</span><span class="o">())</span>
-<span class="w">                    </span><span class="o">}</span>
-<span class="w">                    </span><span class="c1">// get drivers enumerated</span>
-<span class="w">                    </span><span class="n">println</span><span class="o">(</span><span class="n">nebula</span><span class="o">(</span><span class="s1">&#39;update-config driver-config iio_device_names -b &#39;</span><span class="o">+</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="kc">false</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span><span class="w"> </span><span class="kc">false</span><span class="o">))</span>
+partition &quot;Try Block&quot; {
+  :Get board IP address;
+  note right: def ip = nebula('update-config network-config dutip --board-name='+board)
+  
+  partition &quot;DMESG Check&quot; {
+    :Check DMESG for errors;
+    note right: nebula(&quot;net.check-dmesg - - ip='&quot; + ip + &quot;' - - board-name=&quot; + board)
+    if (DMESG check fails?) then (yes)
+      :Add failure to failed_test;
+      note right: failed_test = failed_test + &quot;[dmesg check failed: ${ex.getMessage()}]&quot;
+    endif
+  }
+  
+  partition &quot;IIO Devices Check&quot; {
+    :Check IIO devices;
+    note right: nebula('driver.check-iio-devices - - uri=&quot;ip:'+ip+'&quot; - - board-name='+board, true, true, true)
+    if (IIO devices check fails?) then (yes)
+      :Add failure to failed_test;
+      :Parse missing devices;
+      :Write missing devices log;
+      :Set elastic field for missing drivers;
+    note right
+        failed_test += &quot;[iio_devices check failed: ${ex.getMessage()}]&quot;
+        missing_devs = Eval.me(ex.getMessage().split('\n').last().split('not found')[1].replaceAll(&quot;'\$&quot;,&quot;&quot;))
+        missing_drivers = missing_devs.size()
+        writeFile(file: board+'_missing_devs.log', text: missing_devs.join(&quot;,&quot;))
+        set_elastic_field(board, 'drivers_missing', missing_drivers.toString())
+    end note
+    endif
+  }
+  
+  :Get drivers enumerated;
+  note right: nebula('update-config driver-config iio_device_names -b '+board, false, true, false)
+  
+  partition &quot;Diagnostics Check&quot; {
+    if (Board is not firmware board?) then (yes)
+      :Run network diagnostics;
+      note right: nebula(&quot;net.run-diagnostics - - ip='&quot;+ip+&quot;' - - board-name=&quot;+board, true, true, true)
+      :Archive diagnostic reports;
+      note right: archiveArtifacts artifacts: '*_diag_report.tar.bz2', followSymlinks: false, allowEmptyArchive: true
+      if (Diagnostics fails?) then (yes)
+        :Add failure to failed_test;
+        note right: failed_test = failed_test + &quot; [diagnostics failed: ${ex.getMessage()}]&quot;
+      endif
+    endif
+  }
+  
+  if (Any tests failed?) then (yes)
+    :Throw Linux Tests Failed exception;
+    note right: if(failed_test &amp;&amp; !failed_test.allWhitespace)
+  endif
+}
 
-<span class="w">                    </span><span class="k">try</span><span class="o">{</span>
-<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="o">(!</span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">firmware_boards</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">board</span><span class="o">))</span>
-<span class="w">                            </span><span class="n">nebula</span><span class="o">(</span><span class="s2">&quot;net.run-diagnostics --ip=&#39;&quot;</span><span class="o">+</span><span class="n">ip</span><span class="o">+</span><span class="s2">&quot;&#39; --board-name=&quot;</span><span class="o">+</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">)</span>
-<span class="w">                            </span><span class="n">archiveArtifacts</span><span class="w"> </span><span class="nl">artifacts:</span><span class="w"> </span><span class="s1">&#39;*_diag_report.tar.bz2&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">followSymlinks:</span><span class="w"> </span><span class="kc">false</span><span class="o">,</span><span class="w"> </span><span class="nl">allowEmptyArchive:</span><span class="w"> </span><span class="kc">true</span>
-<span class="w">                    </span><span class="o">}</span><span class="k">catch</span><span class="o">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">ex</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
-<span class="w">                        </span><span class="n">failed_test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">failed_test</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot; [diagnostics failed: ${ex.getMessage()}]&quot;</span>
-<span class="w">                    </span><span class="o">}</span>
+partition &quot;Exception Handling&quot; {
+  if (Exception occurs?) then (yes)
+    :Throw NominalException;
+    note right: throw new NominalException(ex.getMessage())
+  endif
+}
 
-<span class="w">                    </span><span class="k">if</span><span class="o">(</span><span class="n">failed_test</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">failed_test</span><span class="o">.</span><span class="na">allWhitespace</span><span class="o">){</span>
-<span class="w">                        </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Exception</span><span class="o">(</span><span class="s2">&quot;Linux Tests Failed: ${failed_test}&quot;</span><span class="o">)</span>
-<span class="w">                    </span><span class="o">}</span>
-<span class="w">                </span><span class="o">}</span><span class="k">catch</span><span class="o">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">ex</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
-<span class="w">                    </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">NominalException</span><span class="o">(</span><span class="n">ex</span><span class="o">.</span><span class="na">getMessage</span><span class="o">())</span>
-<span class="w">                </span><span class="o">}</span><span class="k">finally</span><span class="o">{</span>
-<span class="w">                    </span><span class="c1">// count dmesg errs and warns</span>
-<span class="w">                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;dmesg_errs&#39;</span><span class="o">,</span><span class="w"> </span><span class="n">sh</span><span class="o">(</span><span class="nl">returnStdout:</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span><span class="w"> </span><span class="nl">script:</span><span class="w"> </span><span class="s1">&#39;cat dmesg_err_filtered.log | wc -l&#39;</span><span class="o">).</span><span class="na">trim</span><span class="o">())</span>
-<span class="w">                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;dmesg_warns&#39;</span><span class="o">,</span><span class="w"> </span><span class="n">sh</span><span class="o">(</span><span class="nl">returnStdout:</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span><span class="w"> </span><span class="nl">script:</span><span class="w"> </span><span class="s1">&#39;cat dmesg_warn.log | wc -l&#39;</span><span class="o">).</span><span class="na">trim</span><span class="o">())</span>
-<span class="w">                    </span><span class="c1">// Rename logs</span>
-<span class="w">                    </span><span class="n">run_i</span><span class="o">(</span><span class="s2">&quot;if [ -f dmesg.log ]; then mv dmesg.log dmesg_&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot;.log; fi&quot;</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">run_i</span><span class="o">(</span><span class="s2">&quot;if [ -f dmesg_err_filtered.log ]; then mv dmesg_err_filtered.log dmesg_&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot;_err.log; fi&quot;</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">run_i</span><span class="o">(</span><span class="s2">&quot;if [ -f dmesg_warn.log ]; then mv dmesg_warn.log dmesg_&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot;_warn.log; fi&quot;</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">archiveArtifacts</span><span class="w"> </span><span class="nl">artifacts:</span><span class="w"> </span><span class="s1">&#39;*.log&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">followSymlinks:</span><span class="w"> </span><span class="kc">false</span><span class="o">,</span><span class="w"> </span><span class="nl">allowEmptyArchive:</span><span class="w"> </span><span class="kc">true</span>
-<span class="w">                </span><span class="o">}</span>
-<span class="w">            </span><span class="o">}</span>
-<span class="w">        </span><span class="o">};</span>
-</pre></div>
-</div>
-</details><div class="line-block">
-<div class="line"><br /></div>
-</div>
+partition &quot;Finally Block&quot; {
+  :Count DMESG errors and warnings;
+  note right
+    set_elastic_field(board, 'dmesg_errs', sh(returnStdout: true, script: 'cat dmesg_err_filtered.log | wc -l').trim())
+    set_elastic_field(board, 'dmesg_warns', sh(returnStdout: true, script: 'cat dmesg_warn.log | wc -l').trim())
+  end note
+  
+  :Rename and archive logs;
+  note right
+    run_i(&quot;if [ -f dmesg.log ]; then mv dmesg.log dmesg_&quot; + board + &quot;.log; fi&quot;)
+    run_i(&quot;if [ -f dmesg_err_filtered.log ]; then mv dmesg_err_filtered.log dmesg_&quot; + board + &quot;_err.log; fi&quot;)
+    run_i(&quot;if [ -f dmesg_warn.log ]; then mv dmesg_warn.log dmesg_&quot; + board + &quot;_warn.log; fi&quot;)
+    archiveArtifacts artifacts: '*.log', followSymlinks: false, allowEmptyArchive: true
+  end note
+}
+
+:Stage completed;
+stop
+&#64;enduml"/>
+</p>
 </section>
 <section id="pyaditests">
 <h3>PyADITests<a class="headerlink" href="#pyaditests" title="Permalink to this heading"></a></h3>
 <p>This stage runs the pyadi-iio test on the target board.</p>
-<details class="summary-pyaditests-stage">
-<summary>PyADITests Stage</summary><div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="s1">&#39;PyADITests&#39;</span><span class="o">:</span>
-<span class="w">        </span><span class="n">cls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">-&gt;</span>
-<span class="w">            </span><span class="n">stage</span><span class="o">(</span><span class="s1">&#39;Run Python Tests&#39;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
-<span class="w">                </span><span class="k">try</span>
-<span class="w">                </span><span class="o">{</span>
-<span class="w">                    </span><span class="c1">//def ip = nebula(&#39;uart.get-ip&#39;)</span>
-<span class="w">                    </span><span class="kt">def</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nebula</span><span class="o">(</span><span class="s1">&#39;update-config network-config dutip --board-name=&#39;</span><span class="o">+</span><span class="n">board</span><span class="o">)</span>
-<span class="w">                    </span><span class="kt">def</span><span class="w"> </span><span class="n">serial</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nebula</span><span class="o">(</span><span class="s1">&#39;update-config uart-config address --board-name=&#39;</span><span class="o">+</span><span class="n">board</span><span class="o">)</span>
-<span class="w">                    </span><span class="kt">def</span><span class="w"> </span><span class="n">uri</span><span class="o">;</span>
-<span class="w">                    </span><span class="n">println</span><span class="o">(</span><span class="s1">&#39;IP: &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ip</span><span class="o">)</span>
-<span class="w">                    </span><span class="c1">// temporarily get pytest-libiio from another source</span>
-<span class="w">                    </span><span class="n">run_i</span><span class="o">(</span><span class="s1">&#39;git clone -b &quot;&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">pytest_libiio_branch</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;&quot; &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">pytest_libiio_repo</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">dir</span><span class="o">(</span><span class="s1">&#39;pytest-libiio&#39;</span><span class="o">){</span>
-<span class="w">                        </span><span class="n">run_i</span><span class="o">(</span><span class="s1">&#39;python3 setup.py install&#39;</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">)</span>
-<span class="w">                    </span><span class="o">}</span>
-<span class="w">                    </span><span class="n">run_i</span><span class="o">(</span><span class="s1">&#39;git clone -b &quot;&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">pyadi_iio_branch</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;&quot; &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">pyadi_iio_repo</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">dir</span><span class="o">(</span><span class="s1">&#39;pyadi-iio&#39;</span><span class="o">)</span>
-<span class="w">                    </span><span class="o">{</span>
-<span class="w">                        </span><span class="n">run_i</span><span class="o">(</span><span class="s1">&#39;pip3 install -r requirements.txt&#39;</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">)</span>
-<span class="w">                        </span><span class="n">run_i</span><span class="o">(</span><span class="s1">&#39;pip3 install -r requirements_dev.txt&#39;</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">)</span>
-<span class="w">                        </span><span class="n">run_i</span><span class="o">(</span><span class="s1">&#39;pip3 install pylibiio&#39;</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">)</span>
-<span class="w">                        </span><span class="n">run_i</span><span class="o">(</span><span class="s1">&#39;mkdir testxml&#39;</span><span class="o">)</span>
-<span class="w">                        </span><span class="n">run_i</span><span class="o">(</span><span class="s1">&#39;mkdir testhtml&#39;</span><span class="o">)</span>
-<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">iio_uri_source</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s2">&quot;ip&quot;</span><span class="o">)</span>
-<span class="w">                            </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ip:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ip</span><span class="o">;</span>
-<span class="w">                        </span><span class="k">else</span>
-<span class="w">                            </span><span class="n">uri</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;serial:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">serial</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot;,&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">iio_uri_baudrate</span><span class="o">.</span><span class="na">toString</span><span class="o">()</span>
-<span class="w">                        </span><span class="n">check</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">check_for_marker</span><span class="o">(</span><span class="n">board</span><span class="o">)</span>
-<span class="w">                        </span><span class="n">board</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">board</span><span class="o">.</span><span class="na">replaceAll</span><span class="o">(</span><span class="s1">&#39;-&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;_&#39;</span><span class="o">)</span>
-<span class="w">                        </span><span class="n">board_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">check</span><span class="o">.</span><span class="na">board_name</span><span class="o">.</span><span class="na">replaceAll</span><span class="o">(</span><span class="s1">&#39;-&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;_&#39;</span><span class="o">)</span>
-<span class="w">                        </span><span class="n">marker</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">check</span><span class="o">.</span><span class="na">marker</span>
-<span class="w">                        </span><span class="n">cmd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;python3 -m pytest --html=testhtml/report.html --junitxml=testxml/&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot;_reports.xml --adi-hw-map -v -k &#39;not stress&#39; -s --uri=&#39;ip:&quot;</span><span class="o">+</span><span class="n">ip</span><span class="o">+</span><span class="s2">&quot;&#39; -m &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">board_name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot; --capture=tee-sys&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">marker</span>
-<span class="w">                        </span><span class="kt">def</span><span class="w"> </span><span class="n">statusCode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sh</span><span class="w"> </span><span class="nl">script:</span><span class="n">cmd</span><span class="o">,</span><span class="w"> </span><span class="nl">returnStatus:</span><span class="kc">true</span>
+<p class="plantuml">
+<img src="_images/plantuml-66fc22820fcbd8ca5a461f50ddead1feeabf351f.png" alt="&#64;startuml PyADITests Workflow
+start
+title Run Python Tests Stage Workflow
+:Execute Run Python Tests stage;
 
-<span class="w">                        </span><span class="c1">// generate html report</span>
-<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="n">fileExists</span><span class="o">(</span><span class="s1">&#39;testhtml/report.html&#39;</span><span class="o">)){</span>
-<span class="w">                            </span><span class="n">publishHTML</span><span class="o">(</span><span class="n">target</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="o">[</span>
-<span class="w">                                </span><span class="nl">escapeUnderscores:</span><span class="w"> </span><span class="kc">false</span><span class="o">,</span>
-<span class="w">                                </span><span class="nl">allowMissing:</span><span class="w"> </span><span class="kc">false</span><span class="o">,</span>
-<span class="w">                                </span><span class="nl">alwaysLinkToLastBuild:</span><span class="w"> </span><span class="kc">false</span><span class="o">,</span>
-<span class="w">                                </span><span class="nl">keepAll:</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span>
-<span class="w">                                </span><span class="nl">reportDir:</span><span class="w"> </span><span class="s1">&#39;testhtml&#39;</span><span class="o">,</span>
-<span class="w">                                </span><span class="nl">reportFiles:</span><span class="w"> </span><span class="s1">&#39;report.html&#39;</span><span class="o">,</span>
-<span class="w">                                </span><span class="nl">reportName:</span><span class="w"> </span><span class="n">board</span><span class="o">,</span>
-<span class="w">                                </span><span class="nl">reportTitles:</span><span class="w"> </span><span class="n">board</span><span class="o">])</span>
-<span class="w">                        </span><span class="o">}</span>
+partition &quot;Try Block&quot; {
+  :Get board configuration and declare variables;
+  note right
+  ip = nebula('update-config network-config dutip - - board-name=' + board)
+  serial = nebula('update-config uart-config address - - board-name=' + board)
+  def uri;
+  println('IP: ' + ip)
+  end note
+  
+  :Clone pytest-libiio repository;
+  note right
+  run_i('git clone -b &quot;' + gauntEnv.pytest_libiio_branch + '&quot; ' + gauntEnv.pytest_libiio_repo, true)
+  end note
+  
+  partition &quot;pytest-libiio Setup&quot; {
+    :Install pytest-libiio in its directory;
+    note right
+    dir('pytest-libiio') {
+        run_i('python3 setup.py install', true)
+    }
+    end note
+  }
+  
+  :Clone pyadi-iio repository;
+  note right
+  run_i('git clone -b &quot;' + gauntEnv.pyadi_iio_branch + '&quot; ' + gauntEnv.pyadi_iio_repo, true)
+  end note
+  
+  :Enter pyadi-iio directory;
+  note right: dir('pyadi-iio')
+  
+  partition &quot;pyadi-iio Setup (within dir)&quot; {
+    
+    :Install dependencies;
+    note right
+    run_i('pip3 install -r requirements.txt', true)
+    run_i('pip3 install -r requirements_dev.txt', true)
+    run_i('pip3 install pylibiio', true)
+    end note
+    
+    :Create test directories;
+    note right
+    run_i('mkdir testxml')
+    run_i('mkdir testhtml')
+    end note
+    
+    :Determine URI source;
+    if (iio_uri_source == &quot;ip&quot;?) then (yes)
+      :Set IP URI;
+      note right: uri = &quot;ip:&quot; + ip
+    else (no)
+      :Set serial URI;
+      note right: uri = &quot;serial:&quot; + serial + &quot;,&quot; + gauntEnv.iio_uri_baudrate.toString()
+    endif
+    
+    :Configure board markers;
+    note right
+    check = check_for_marker(board)
+    board = board.replaceAll('-', '_')
+    board_name = check.board_name.replaceAll('-', '_')
+    marker = check.marker
+    end note
+    
+    :Build pytest command;
+    note right
+    cmd = &quot;python3 -m pytest - - html=testhtml/report.html - - junitxml=testxml/&quot; + board + &quot;_reports.xml - - adi-hw-map -v -k 'not stress' -s - - uri='ip:&quot;+ip+&quot;' -m &quot; + board_name + &quot; - - capture=tee-sys&quot; + marker
+    end note
+    
+    :Execute pytest tests;
+    note right: statusCode = sh script:cmd, returnStatus:true
+    
+    if (HTML report exists?) then (yes)
+      :Publish HTML report;
+      note right
+    publishHTML(target : [
+        escapeUnderscores: false,
+        allowMissing: false,
+        alwaysLinkToLastBuild: false,
+        keepAll: true,
+        reportDir: 'testhtml',
+        reportFiles: 'report.html',
+        reportName: board,
+        reportTitles: board])
+    }
+      end note
+    endif
+    
+    if (XML results exist?) then (yes)
+      partition &quot;Parse pytest results (within try-catch)&quot; {
+        :Define pytest metrics to parse;
+        note right
+        def pytest_logs = ['errors', 'failures', 'skipped', 'tests']
+        end note
+        
+        :Parse each metric from XML;
+        note right
+        pytest_logs.each {
+            cmd = 'cat testxml/' + board + '_reports.xml | sed -rn \'s/.*'
+            cmd+= it + '=&quot;([0-9]+)&quot;.*/\\1/p\''
+            set_elastic_field(board.replaceAll('_', '-'), it, sh(returnStdout: true, script: cmd).trim())
+        }
+        end note
+        
+        if (Parsing succeeds?) then (no)
+          :Log parsing failure;
+          note right
+          catch(Exception ex){
+              println('Parsing pytest results failed')
+              echo getStackTrace(ex)
+          }
+          end note
+        endif
+      }
+    endif
+    
+    :Evaluate pytest status code;
+    
+    if ((statusCode != 5) &amp;&amp; (statusCode != 0)) then (yes)
+      :throw new NominalException('PyADITests Failed');
+    else (no)
+    endif
+  }
+}
 
-<span class="w">                        </span><span class="c1">// get pytest results for logging</span>
-<span class="w">                        </span><span class="k">if</span><span class="o">(</span><span class="n">fileExists</span><span class="o">(</span><span class="s1">&#39;testxml/&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;_reports.xml&#39;</span><span class="o">)){</span>
-<span class="w">                            </span><span class="k">try</span><span class="o">{</span>
-<span class="w">                                </span><span class="kt">def</span><span class="w"> </span><span class="n">pytest_logs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s1">&#39;errors&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;failures&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;skipped&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;tests&#39;</span><span class="o">]</span>
-<span class="w">                                </span><span class="n">pytest_logs</span><span class="o">.</span><span class="na">each</span><span class="w"> </span><span class="o">{</span>
-<span class="w">                                    </span><span class="n">cmd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;cat testxml/&#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;_reports.xml | sed -rn \&#39;s/.*&#39;</span>
-<span class="w">                                    </span><span class="n">cmd</span><span class="o">+=</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;=&quot;([0-9]+)&quot;.*/\\1/p\&#39;&#39;</span>
-<span class="w">                                    </span><span class="n">set_elastic_field</span><span class="o">(</span><span class="n">board</span><span class="o">.</span><span class="na">replaceAll</span><span class="o">(</span><span class="s1">&#39;_&#39;</span><span class="o">,</span><span class="w"> </span><span class="s1">&#39;-&#39;</span><span class="o">),</span><span class="w"> </span><span class="n">it</span><span class="o">,</span><span class="w"> </span><span class="n">sh</span><span class="o">(</span><span class="nl">returnStdout:</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span><span class="w"> </span><span class="nl">script:</span><span class="w"> </span><span class="n">cmd</span><span class="o">).</span><span class="na">trim</span><span class="o">())</span>
-<span class="w">                                </span><span class="o">}</span>
-<span class="w">                                </span><span class="c1">// println(gauntEnv.elastic_logs[board.replaceAll(&#39;_&#39;, &#39;-&#39;)])</span>
-<span class="w">                            </span><span class="o">}</span><span class="k">catch</span><span class="o">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">ex</span><span class="o">){</span>
-<span class="w">                                </span><span class="n">println</span><span class="o">(</span><span class="s1">&#39;Parsing pytest results failed&#39;</span><span class="o">)</span>
-<span class="w">                                </span><span class="n">echo</span><span class="w"> </span><span class="n">getStackTrace</span><span class="o">(</span><span class="n">ex</span><span class="o">)</span>
-<span class="w">                            </span><span class="o">}</span>
-<span class="w">                        </span><span class="o">}</span>
+partition &quot;Finally Block&quot; {
+  :Archive test results;
+  note right: junit testResults: 'pyadi-iio/testxml/*.xml', allowEmptyResults: true
+}
 
-<span class="w">                        </span><span class="c1">// throw exception if pytest failed</span>
-<span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="o">((</span><span class="n">statusCode</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">5</span><span class="o">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">(</span><span class="n">statusCode</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="o">)){</span>
-<span class="w">                            </span><span class="c1">// Ignore error 5 which means no tests were run</span>
-<span class="w">                            </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">NominalException</span><span class="o">(</span><span class="s1">&#39;PyADITests Failed&#39;</span><span class="o">)</span>
-<span class="w">                        </span><span class="o">}</span>
-<span class="w">                    </span><span class="o">}</span>
-<span class="w">                </span><span class="o">}</span>
-<span class="w">                </span><span class="k">finally</span>
-<span class="w">                </span><span class="o">{</span>
-<span class="w">                    </span><span class="c1">// archiveArtifacts artifacts: &#39;pyadi-iio/testxml/*.xml&#39;, followSymlinks: false, allowEmptyArchive: true</span>
-<span class="w">                    </span><span class="n">junit</span><span class="w"> </span><span class="nl">testResults:</span><span class="w"> </span><span class="s1">&#39;pyadi-iio/testxml/*.xml&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">allowEmptyResults:</span><span class="w"> </span><span class="kc">true</span>
-<span class="w">                </span><span class="o">}</span>
-<span class="w">            </span><span class="o">}</span>
-<span class="w">        </span><span class="o">}</span>
-</pre></div>
-</div>
-</details><div class="line-block">
-<div class="line"><br /></div>
-</div>
+:Stage completed;
+stop
+&#64;enduml"/>
+</p>
 </section>
 <section id="libad9361test">
 <h3>LibAD9361Test<a class="headerlink" href="#libad9361test" title="Permalink to this heading"></a></h3>
 <p>This stage runs the LibAD9361 tests available on the repository.</p>
-<details class="summary-libad9361tests-stage">
-<summary>LibAD9361Tests Stage</summary><div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="s1">&#39;LibAD9361Tests&#39;</span><span class="o">:</span>
-<span class="w">        </span><span class="n">cls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">-&gt;</span>
-<span class="w">            </span><span class="kt">def</span><span class="w"> </span><span class="n">supported_boards</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s1">&#39;zynq-zed-adv7511-ad9361-fmcomms2-3&#39;</span><span class="o">,</span>
-<span class="w">                                    </span><span class="s1">&#39;zynq-zc706-adv7511-ad9361-fmcomms5&#39;</span><span class="o">,</span>
-<span class="w">                                    </span><span class="s1">&#39;zynq-adrv9361-z7035-fmc&#39;</span><span class="o">,</span>
-<span class="w">                                    </span><span class="s1">&#39;zynq-zed-adv7511-ad9364-fmcomms4&#39;</span><span class="o">,</span>
-<span class="w">                                    </span><span class="s1">&#39;pluto&#39;</span><span class="o">]</span>
-<span class="w">            </span><span class="k">if</span><span class="o">(</span><span class="n">supported_boards</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">board</span><span class="o">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">libad9361_iio_branch</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">null</span><span class="o">){</span>
-<span class="w">                </span><span class="k">try</span><span class="o">{</span>
-<span class="w">                    </span><span class="n">stage</span><span class="o">(</span><span class="s2">&quot;Test libad9361&quot;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
-<span class="w">                        </span><span class="kt">def</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nebula</span><span class="o">(</span><span class="s2">&quot;update-config -s network-config -f dutip --board-name=&quot;</span><span class="o">+</span><span class="n">board</span><span class="o">)</span>
-<span class="w">                        </span><span class="n">run_i</span><span class="o">(</span><span class="s1">&#39;git clone -b &#39;</span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">libad9361_iio_branch</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">libad9361_iio_repo</span><span class="o">,</span><span class="w"> </span><span class="kc">true</span><span class="o">)</span>
-<span class="w">                        </span><span class="n">dir</span><span class="o">(</span><span class="s1">&#39;libad9361-iio&#39;</span><span class="o">)</span>
-<span class="w">                        </span><span class="o">{</span>
-<span class="w">                            </span><span class="n">sh</span><span class="w"> </span><span class="s1">&#39;mkdir build&#39;</span>
-<span class="w">                            </span><span class="n">dir</span><span class="o">(</span><span class="s1">&#39;build&#39;</span><span class="o">)</span>
-<span class="w">                            </span><span class="o">{</span>
-<span class="w">                                </span><span class="n">sh</span><span class="w"> </span><span class="s1">&#39;cmake ..&#39;</span>
-<span class="w">                                </span><span class="n">sh</span><span class="w"> </span><span class="s1">&#39;make&#39;</span>
-<span class="w">                                </span><span class="n">sh</span><span class="w"> </span><span class="s1">&#39;URI_AD9361=&quot;ip:&#39;</span><span class="o">+</span><span class="n">ip</span><span class="o">+</span><span class="s1">&#39;&quot; ctest -T test --no-compress-output -V&#39;</span>
-<span class="w">                            </span><span class="o">}</span>
-<span class="w">                        </span><span class="o">}</span>
-<span class="w">                    </span><span class="o">}</span>
-<span class="w">                </span><span class="o">}</span>
-<span class="w">                </span><span class="k">finally</span>
-<span class="w">                </span><span class="o">{</span>
-<span class="w">                    </span><span class="n">dir</span><span class="o">(</span><span class="s1">&#39;libad9361-iio/build&#39;</span><span class="o">){</span>
-<span class="w">                        </span><span class="n">xunit</span><span class="o">([</span><span class="n">CTest</span><span class="o">(</span><span class="nl">deleteOutputFiles:</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span><span class="w"> </span><span class="nl">failIfNotNew:</span><span class="w"> </span><span class="kc">true</span><span class="o">,</span><span class="w"> </span><span class="nl">pattern:</span><span class="w"> </span><span class="s1">&#39;Testing/**/*.xml&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">skipNoTestFiles:</span><span class="w"> </span><span class="kc">false</span><span class="o">,</span><span class="w"> </span><span class="nl">stopProcessingIfError:</span><span class="w"> </span><span class="kc">true</span><span class="o">)])</span>
-<span class="w">                    </span><span class="o">}</span>
-<span class="w">                </span><span class="o">}</span>
-<span class="w">            </span><span class="o">}</span><span class="k">else</span><span class="o">{</span>
-<span class="w">                </span><span class="n">println</span><span class="o">(</span><span class="s2">&quot;LibAD9361Tests: Skipping board: &quot;</span><span class="o">+</span><span class="n">board</span><span class="o">)</span>
-<span class="w">            </span><span class="o">}</span>
-<span class="w">        </span><span class="o">}</span>
-<span class="w">        </span><span class="k">break</span>
-<span class="k">default</span><span class="o">:</span>
-<span class="w">    </span><span class="k">throw</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Exception</span><span class="o">(</span><span class="s1">&#39;Unknown library stage: &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">stage_name</span><span class="o">)</span>
-<span class="o">}</span>
-</pre></div>
-</div>
-</details><div class="line-block">
-<div class="line"><br /></div>
-</div>
+<p class="plantuml">
+<img src="_images/plantuml-2e99995e0aa308ee0ab6df0b822f244f066e89e3.png" alt="&#64;startuml LibAD9361Tests Workflow
+start
+title Test libad9361 Stage Workflow
+:Execute LibAD9361Tests stage;
+
+:Define supported boards list;
+note right 
+def supported_boards = [
+    zynq-zed-adv7511-ad9361-fmcomms2-3',
+    zynq-zc706-adv7511-ad9361-fmcomms5',
+    zynq-adrv9361-z7035-fmc',
+    zynq-zed-adv7511-ad9364-fmcomms4',
+    pluto']
+end note
+
+if (Board supported and branch available?) then (yes)
+  note right: supported_boards.contains(board) &amp;&amp; gauntEnv.libad9361_iio_branch != null
+  
+  partition &quot;Try Block&quot; {
+    :Execute Test libad9361 stage;
+    :Get board IP configuration;
+    note right: def ip = nebula(&quot;update-config -s network-config -f dutip --board-name=&quot;+board)
+    
+    :Clone libad9361-iio repository;
+    note right: run_i('git clone -b '+ gauntEnv.libad9361_iio_branch + ' ' + gauntEnv.libad9361_iio_repo, true)
+    
+    :Enter libad9361-iio directory;
+    note right: dir('libad9361-iio')
+    
+    partition &quot;Build Setup (within dir)&quot; {
+      :Create build directory;
+      note right: sh 'mkdir build'
+      
+      :Enter build directory;
+      note right: dir('build')
+      
+      partition &quot;CMake Build Process&quot; {
+        :Configure with CMake;
+        note right: sh 'cmake ..'
+        
+        :Compile with Make;
+        note right: sh 'make'
+        
+        :Run CTest with URI;
+        note right: sh 'URI_AD9361=&quot;ip:'+ip+'&quot; ctest -T test --no-compress-output -V'
+      }
+    }
+  }
+  
+  partition &quot;Finally Block&quot; {
+    :Process test results;
+    note right
+    dir('libad9361-iio/build') {
+        xunit([CTest(
+            deleteOutputFiles: true,
+            failIfNotNew: true,
+            pattern: 'Testing/**/*.xml',
+            skipNoTestFiles: false,
+            stopProcessingIfError: true
+        )])
+    }
+    end note
+  }
+  
+else (no)
+  :Skip board testing;
+  note right: println(&quot;LibAD9361Tests: Skipping board: &quot;+board)
+endif
+
+:Stage completed;
+stop
+&#64;enduml"/>
+</p>
 </section>
 <section id="matlabtests">
 <h3>MATLABTests<a class="headerlink" href="#matlabtests" title="Permalink to this heading"></a></h3>
 <p>This stage runs the MATLAB hardware test runner for the target boards.</p>
-<details class="summary-matlabtests-stage">
-<summary>MATLABTests Stage</summary><div class="highlight-groovy notranslate"><div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="s1">&#39;MATLABTests&#39;</span><span class="o">:</span>
-<span class="w">    </span><span class="n">cls</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="n">board</span><span class="w"> </span><span class="o">-&gt;</span>
-<span class="w">        </span><span class="kt">def</span><span class="w"> </span><span class="n">under_scm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span>
-<span class="w">        </span><span class="n">stage</span><span class="o">(</span><span class="s2">&quot;Run MATLAB Toolbox Tests&quot;</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
-<span class="w">            </span><span class="kt">def</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nebula</span><span class="o">(</span><span class="s1">&#39;update-config network-config dutip --board-name=&#39;</span><span class="o">+</span><span class="n">board</span><span class="o">)</span>
-<span class="w">            </span><span class="n">sh</span><span class="w"> </span><span class="s1">&#39;cp -r /root/.matlabro /root/.matlab&#39;</span>
-<span class="w">            </span><span class="n">under_scm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">isMultiBranchPipeline</span><span class="o">()</span>
-<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="o">(</span><span class="n">under_scm</span><span class="o">)</span>
-<span class="w">            </span><span class="o">{</span>
-<span class="w">                </span><span class="n">println</span><span class="o">(</span><span class="s2">&quot;Multibranch pipeline. Checkout scm.&quot;</span><span class="o">)</span>
-<span class="w">                </span><span class="n">retry</span><span class="o">(</span><span class="mi">3</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
-<span class="w">                    </span><span class="n">sleep</span><span class="o">(</span><span class="mi">5</span><span class="o">)</span>
-<span class="w">                    </span><span class="n">checkout</span><span class="w"> </span><span class="n">scm</span>
-<span class="w">                    </span><span class="n">sh</span><span class="w"> </span><span class="s1">&#39;git submodule update --init&#39;</span>
-<span class="w">                </span><span class="o">}</span>
-<span class="w">                </span><span class="n">createMFile</span><span class="o">()</span>
-<span class="w">                </span><span class="k">try</span><span class="o">{</span>
-<span class="w">                    </span><span class="n">sh</span><span class="w"> </span><span class="s1">&#39;IIO_URI=&quot;ip:&#39;</span><span class="o">+</span><span class="n">ip</span><span class="o">+</span><span class="s1">&#39;&quot; board=&quot;&#39;</span><span class="o">+</span><span class="n">board</span><span class="o">+</span><span class="s1">&#39;&quot; elasticserver=&#39;</span><span class="o">+</span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">elastic_server</span><span class="o">+</span><span class="s1">&#39; /usr/local/MATLAB/&#39;</span><span class="o">+</span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">matlab_release</span><span class="o">+</span><span class="s1">&#39;/bin/matlab -nosplash -nodesktop -nodisplay -r &quot;run(\&#39;matlab_commands.m\&#39;);exit&quot;&#39;</span>
-<span class="w">                </span><span class="o">}</span><span class="k">finally</span><span class="o">{</span>
-<span class="w">                    </span><span class="n">junit</span><span class="w"> </span><span class="nl">testResults:</span><span class="w"> </span><span class="s1">&#39;*.xml&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">allowEmptyResults:</span><span class="w"> </span><span class="kc">true</span>
-<span class="w">                </span><span class="o">}</span>
-<span class="w">            </span><span class="o">}</span>
-<span class="w">            </span><span class="k">else</span>
-<span class="w">            </span><span class="o">{</span>
-<span class="w">                </span><span class="n">println</span><span class="o">(</span><span class="s2">&quot;Not a multibranch pipeline. Cloning &quot;</span><span class="o">+</span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">matlab_branch</span><span class="o">+</span><span class="s2">&quot; branch from &quot;</span><span class="o">+</span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">matlab_repo</span><span class="o">)</span>
-<span class="w">                </span><span class="n">sh</span><span class="w"> </span><span class="s1">&#39;git clone --recursive -b &#39;</span><span class="o">+</span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">matlab_branch</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">matlab_repo</span><span class="o">+</span><span class="s1">&#39; Toolbox&#39;</span>
-<span class="w">                </span><span class="n">dir</span><span class="o">(</span><span class="s1">&#39;Toolbox&#39;</span><span class="o">)</span>
-<span class="w">                </span><span class="o">{</span>
-<span class="w">                    </span><span class="n">createMFile</span><span class="o">()</span>
-<span class="w">                    </span><span class="k">try</span><span class="o">{</span>
-<span class="w">                        </span><span class="n">sh</span><span class="w"> </span><span class="s1">&#39;IIO_URI=&quot;ip:&#39;</span><span class="o">+</span><span class="n">ip</span><span class="o">+</span><span class="s1">&#39;&quot; board=&quot;&#39;</span><span class="o">+</span><span class="n">board</span><span class="o">+</span><span class="s1">&#39;&quot; elasticserver=&#39;</span><span class="o">+</span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">elastic_server</span><span class="o">+</span><span class="s1">&#39; /usr/local/MATLAB/&#39;</span><span class="o">+</span><span class="n">gauntEnv</span><span class="o">.</span><span class="na">matlab_release</span><span class="o">+</span><span class="s1">&#39;/bin/matlab -nosplash -nodesktop -nodisplay -r &quot;run(\&#39;matlab_commands.m\&#39;);exit&quot;&#39;</span>
-<span class="w">                    </span><span class="o">}</span><span class="k">finally</span><span class="o">{</span>
-<span class="w">                        </span><span class="n">junit</span><span class="w"> </span><span class="nl">testResults:</span><span class="w"> </span><span class="s1">&#39;*.xml&#39;</span><span class="o">,</span><span class="w"> </span><span class="nl">allowEmptyResults:</span><span class="w"> </span><span class="kc">true</span>
-<span class="w">                    </span><span class="o">}</span>
-<span class="w">                </span><span class="o">}</span>
-<span class="w">            </span><span class="o">}</span>
-<span class="w">        </span><span class="o">}</span>
-<span class="w">    </span><span class="o">}</span>
-</pre></div>
-</div>
-</details></section>
+<p class="plantuml">
+<img src="_images/plantuml-9def803f6f95f35337d1a54f62c15d6d0209e0e4.png" alt="&#64;startuml MATLABTests Workflow
+start
+title Run MATLAB Toolbox Tests Stage Workflow
+:Execute MATLABTests stage;
+
+:Initialize under_scm variable;
+note right: def under_scm = true
+
+:Execute Run MATLAB Toolbox Tests stage;
+note right: stage(&quot;Run MATLAB Toolbox Tests&quot;)
+
+:Get board IP configuration;
+note right: def ip = nebula('update-config network-config dutip --board-name='+board)
+
+:Setup MATLAB environment;
+note right: sh 'cp -r /root/.matlabro /root/.matlab'
+
+:Check pipeline type and reassign under_scm;
+note right: under_scm = isMultiBranchPipeline()
+
+if (isMultiBranchPipeline()) then (yes)
+  partition &quot;Multibranch Pipeline Path&quot; {
+    :Checkout SCM with retry;
+    note right
+    retry(3) {
+        sleep(5)
+        checkout scm
+        sh 'git submodule update --init'
+    }
+    end note
+    
+    :Create MATLAB file;
+    note right: createMFile()
+    
+    partition &quot;Try Block&quot; {
+      :Run MATLAB tests;
+      note right
+      sh 'IIO_URI=&quot;ip:'+ip+'&quot; board=&quot;'+board+'&quot; elasticserver='+gauntEnv.elastic_server+' 
+      /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab 
+      -nosplash -nodesktop -nodisplay -r &quot;run(\'matlab_commands.m\');exit&quot;'
+      end note
+    }
+    
+    partition &quot;Finally Block&quot; {
+      :Archive JUnit results;
+      note right: junit testResults: '*.xml', allowEmptyResults: true
+    }
+  }
+  
+else (no)
+  partition &quot;Standard Pipeline Path&quot; {
+    :Clone MATLAB repository;
+    note right
+    sh 'git clone --recursive -b '+gauntEnv.matlab_branch+' 
+    '+gauntEnv.matlab_repo+' Toolbox'
+    end note
+    
+    :Enter Toolbox directory;
+    note right: dir('Toolbox')
+    
+    partition &quot;Toolbox Setup (within dir)&quot; {
+      :Create MATLAB file;
+      note right: createMFile()
+      
+      partition &quot;Try Block&quot; {
+        :Run MATLAB tests;
+        note right
+        sh 'IIO_URI=&quot;ip:'+ip+'&quot; board=&quot;'+board+'&quot; elasticserver='+gauntEnv.elastic_server+' 
+        /usr/local/MATLAB/'+gauntEnv.matlab_release+'/bin/matlab 
+        -nosplash -nodesktop -nodisplay -r &quot;run(\'matlab_commands.m\');exit&quot;'
+        end note
+      }
+      
+      partition &quot;Finally Block&quot; {
+        :Archive JUnit results;
+        note right: junit testResults: '*.xml', allowEmptyResults: true
+      }
+    }
+  }
+endif
+
+:Stage completed;
+stop
+&#64;enduml"/>
+</p>
+</section>
 </section>
 </section>
 
